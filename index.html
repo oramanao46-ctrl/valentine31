@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Valentine's Day</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff5c8a;
+            --secondary: #ffacc5;
+            --accent: #5e3040;
+            --bg: #fff5f7;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg);
+            color: var(--accent);
+            margin: 0; padding: 0;
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- BACKGROUND FLOATERS --- */
+        .bg-floaters {
+            position: fixed; width: 100%; height: 100%; top: 0; left: 0;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .floater {
+            position: absolute; bottom: -50px;
+            animation: floatUp linear infinite; opacity: 0.6;
+        }
+        @keyframes floatUp { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- PAGES CONFIG --- */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s; z-index: 10;
+            padding: 20px; box-sizing: border-box;
+        }
+        .active { display: flex; }
+
+        /* --- PAGE 1: ENVELOPE --- */
+        .chase-area { position: relative; width: 100%; height: 100%; }
+        .flying-envelope {
+            position: absolute; width: 140px; height: 90px;
+            cursor: pointer; z-index: 20; transition: transform 0.2s ease-out;
+        }
+        .env-body {
+            position: relative; z-index: 2; font-size: 6rem; line-height: 1;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15)); text-align: center;
+        }
+        .wing {
+            position: absolute; top: 30px; width: 70px; height: 40px;
+            background: rgba(255,255,255,0.9); border: 2px solid #eec; border-radius: 50%; z-index: 1;
+        }
+        .wing.left { left: -15px; transform-origin: right center; animation: flapL 0.2s infinite alternate; }
+        .wing.right { right: -15px; transform-origin: left center; animation: flapR 0.2s infinite alternate; }
+        @keyframes flapL { from { transform: rotate(-25deg); } to { transform: rotate(35deg); } }
+        @keyframes flapR { from { transform: rotate(25deg); } to { transform: rotate(-35deg); } }
+        
+        .music-hint {
+            position: absolute; bottom: 15%; width: 100%; text-align: center;
+            animation: pulse 1.5s infinite; color: var(--primary); font-weight: 300;
+        }
+        @keyframes pulse { 50% { opacity: 0.6; transform: scale(0.95); } }
+
+        /* --- PAGE 2: HEART --- */
+        .heart-container {
+            width: 220px; height: 200px; position: relative; cursor: pointer;
+            transition: transform 0.1s; filter: drop-shadow(0 10px 20px rgba(255, 92, 138, 0.4));
+        }
+        .heart-container:active { transform: scale(0.95); }
+        .tap-msg { margin-top: 30px; color: #ff5c8a; font-size: 1.1rem; animation: blink 1s infinite; font-weight: 400; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* --- FINAL MESSAGE (Scrollable) --- */
+        .final-msg-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); 
+            z-index: 200;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 1.2s ease-out;
+        }
+        .final-msg-container.show-final { opacity: 1; pointer-events: auto; }
+
+        .final-msg-box {
+            position: relative; z-index: 205;
+            text-align: center; padding: 30px 20px; box-sizing: border-box;
+            background: white; border-radius: 25px; 
+            box-shadow: 0 15px 40px rgba(255, 92, 138, 0.2);
+            max-width: 85%; max-height: 80vh; /* กำหนดความสูงสูงสุด */
+            overflow-y: auto; /* เปิดให้เลื่อนอ่านได้ */
+            transform: scale(0.8) translateY(30px); 
+            opacity: 0;
+            transition: all 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .final-msg-container.show-final .final-msg-box { transform: scale(1) translateY(0); opacity: 1; }
+
+        .final-msg-box h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 20px; }
+        .final-msg-box p { 
+            font-size: 1.05rem; line-height: 1.8; color: #555; 
+            white-space: pre-line; /* รักษาการเว้นบรรทัด */
+            margin: 0;
+        }
+
+        /* Custom Scrollbar */
+        .final-msg-box::-webkit-scrollbar { width: 5px; }
+        .final-msg-box::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+    </style>
+</head>
+<body onclick="playAudio()">
+
+    <audio id="bgm" loop><source src="song.mp3" type="audio/mpeg"></audio>
+
+    <div class="bg-floaters" id="bgFloaters"></div>
+
+    <div id="page1" class="page active">
+        <div class="chase-area">
+            <h2 style="text-align:center; margin-top:100px; color:var(--accent);">จดหมายรักฉบับนี้<br>ต้องใช้ความพยายามนะ! 😝</h2>
+            <div class="flying-envelope" id="envelope" onmouseover="moveEnv()" ontouchstart="moveEnvMobile(event)">
+                <div class="wing left"></div><div class="env-body">💌</div><div class="wing right"></div>
+            </div>
+        </div>
+        <div class="music-hint">🎵 แตะหน้าจอเพื่อเริ่ม 🎵</div>
+    </div>
+
+    <div id="page2" class="page">
+        <h2 style="margin-bottom:40px; color: var(--primary);">เติมรักให้เต็มหัวใจ ❤️</h2>
+        <div class="heart-container" onclick="fillHeart()">
+            <svg viewBox="0 0 200 200" width="100%" height="100%">
+                <defs>
+                    <mask id="heartMask"><path d="M100,180 C20,130 0,80 0,50 C0,20 25,0 55,0 C75,0 90,15 100,30 C110,15 125,0 145,0 C175,0 200,20 200,50 C200,80 180,130 100,180 Z" fill="white"/></mask>
+                    <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" /><stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" /></linearGradient>
+                </defs>
+                <path d="M100,180 C20,130 0,80 0,50 C0,20 25,0 55,0 C75,0 90,15 100,30 C110,15 125,0 145,0 C175,0 200,20 200,50 C200,80 180,130 100,180 Z" fill="none" stroke="#ff5c8a" stroke-width="4" />
+                <rect x="0" y="200" width="200" height="200" fill="url(#pinkGrad)" mask="url(#heartMask)" id="waterLevel"></rect>
+                <ellipse cx="60" cy="50" rx="15" ry="10" fill="white" opacity="0.4" transform="rotate(-30 60 50)"/>
+            </svg>
+            <div style="position:absolute; top:45%; width:100%; text-align:center; color:#ff5c8a; font-weight:bold; font-size: 1.5rem;"><span id="percent">0%</span></div>
+        </div>
+        <p class="tap-msg">👆 จิ้มหัวใจเร็วววว!</p>
+    </div>
+
+    <div class="final-msg-container" id="finalMsgContainer">
+        <div class="final-msg-box">
+            <h1>Happy Valentine's Day 💖</h1>
+            <p>
+                สลามค้าบบิบี๋
+                คุณสามี แบดีน
+
+                บิบี๋ของเค้า 💕💕
+                เค้าขอบคุณบิบี๋ของเค้า
+                สำหรับทุกสิ่งทุกอย่างเยยนะคะ
+
+                บิบี๋ของเค้าเป็น ผช.
+                ที่น่ารักที่ฉุดในโลก
+                บิบี๋เป็นทุกอย่างสำหรับเค้าเยยย
+
+                บิบี๋ของเค้าน่ารักจางง
+                เค้าขอบคุณบิบี๋มากๆเยยนะคะ
+
+                เค้าขอบคุณ Allah
+                ที่ตอบรับดุอาร์ของเค้า
+                ทำให้เค้าได้มาเจอกับบิบี๋ของเค้า 💕💕🤲🏻
+
+                เมื่อก่อนบิบี๋ของเค้า
+                ต้องทำทุกอย่างคนเดียว
+                เป็นหัวหน้าครอบครัว
+                ดูแลครอบครัว
+                เจอบททดสอบมากมาย
+
+                บิบี๋ของเค้าเหนื่อยมากเยยใช่มั้ยคะ
+                คนเก่งของเค้า
+                มากอดเค้าเย้วว 🫂🤍
+
+                ตอนนี้บิบี๋มีเค้าอยู่ข้างๆ
+                เค้าอาจไม่ได้เพอร์เฟค
+                ไม่ได้เก่งมาก
+                แต่เค้าจะคอยซัพพอร์ตคุณสามีของเค้าเอง
+
+                บิบี๋ไม่ต้องเหนื่อยคนเดียวแย้วนะคะ
+                บิบี๋มีเค้าอยู่
+                เค้าจะคอยอยู่ข้างๆ
+                คอยซัพพอร์ต
+                บิบี๋ของเค้าเองง
+
+                เค้าขอมาอัฟบิบี๋นะคะ
+                ถ้าเค้าทำตัวไม่น่ารักใส่บิบี๋
+
+                เค้ารักบิบี๋นะคะ
+                ถึงเป็นคำเดิมๆที่เค้าพูดทุกวัน
+                แต่เค้ารักบิบี๋ของเค้าทุกวัน
+                รักขึ้นทุกวันๆๆ
+                รักมากๆเยยย
+
+                บิบี๋ของเค้าน่ารักที่ซู๊ดดในโลก
+                เค้าขอบคุณบิบี๋นะคะ 🥹🩷🫂
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL: AUDIO & BACKGROUND ---
+        let audioPlaying = false;
+        function playAudio() {
+            if(!audioPlaying) {
+                document.getElementById('bgm').play().catch(()=>{});
+                audioPlaying = true;
+                document.querySelector('.music-hint').style.display = 'none';
+            }
+        }
+        
+        const emojis = ['🌸', '❤️', '💌', '🌹', '✨', '💖'];
+        function createFloaters(containerId, num) {
+            const container = document.getElementById(containerId);
+            for(let i=0; i<num; i++) {
+                let el = document.createElement('div');
+                el.className = 'floater';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                el.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                document.body.appendChild(el); 
+            }
+        }
+        createFloaters('bgFloaters', 20);
+
+        // --- NAVIGATION ---
+        function goTo(id) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.style.opacity = 0;
+                setTimeout(() => p.classList.remove('active'), 500);
+            });
+            setTimeout(() => {
+                const p = document.getElementById(id);
+                p.classList.add('active');
+                p.style.opacity = 1;
+            }, 500);
+        }
+
+        // --- PAGE 1: CHASE ---
+        const env = document.getElementById('envelope');
+        env.style.left = "50%"; env.style.top = "40%"; env.style.transform = "translate(-50%, -50%)";
+        function moveEnv() {
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 150);
+            env.style.transform = "translate(0,0)"; env.style.left = x + 'px'; env.style.top = y + 'px';
+        }
+        let touches = 0;
+        function moveEnvMobile(e) {
+            touches++;
+            if(touches < 5) { e.preventDefault(); moveEnv(); }
+            else { setTimeout(() => goTo('page2'), 200); }
+        }
+        env.onclick = () => goTo('page2');
+
+        // --- PAGE 2: HEART ---
+        let percent = 0;
+        function fillHeart() {
+            if(percent >= 100) return;
+            percent += 10; 
+            if(percent > 100) percent = 100;
+            
+            const water = document.getElementById('waterLevel');
+            water.style.transition = "y 0.4s ease-out";
+            water.setAttribute('y', 200 - (200 * (percent/100)));
+            document.getElementById('percent').innerText = percent + "%";
+            
+            if(percent >= 100) {
+                setTimeout(() => {
+                    document.getElementById('finalMsgContainer').classList.add('show-final');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>
