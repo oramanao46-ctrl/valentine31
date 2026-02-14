@@ -79,8 +79,6 @@
             transition: transform 0.1s; filter: drop-shadow(0 10px 20px rgba(255, 92, 138, 0.4));
         }
         .heart-container:active { transform: scale(0.95); }
-        .tap-msg { margin-top: 30px; color: #ff5c8a; font-size: 1.1rem; animation: blink 1s infinite; font-weight: 400; }
-        @keyframes blink { 50% { opacity: 0.5; } }
 
         /* --- FINAL MESSAGE (Scrollable) --- */
         .final-msg-container {
@@ -98,8 +96,8 @@
             text-align: center; padding: 30px 20px; box-sizing: border-box;
             background: white; border-radius: 25px; 
             box-shadow: 0 15px 40px rgba(255, 92, 138, 0.2);
-            max-width: 85%; max-height: 80vh; /* กำหนดความสูงสูงสุด */
-            overflow-y: auto; /* เปิดให้เลื่อนอ่านได้ */
+            max-width: 85%; max-height: 80vh; 
+            overflow-y: auto; 
             transform: scale(0.8) translateY(30px); 
             opacity: 0;
             transition: all 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -109,11 +107,10 @@
         .final-msg-box h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 20px; }
         .final-msg-box p { 
             font-size: 1.05rem; line-height: 1.8; color: #555; 
-            white-space: pre-line; /* รักษาการเว้นบรรทัด */
+            white-space: pre-line; 
             margin: 0;
         }
 
-        /* Custom Scrollbar */
         .final-msg-box::-webkit-scrollbar { width: 5px; }
         .final-msg-box::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
 
@@ -127,7 +124,7 @@
 
     <div id="page1" class="page active">
         <div class="chase-area">
-            <h2 style="text-align:center; margin-top:100px; color:var(--accent);">จดหมายรักฉบับนี้<br>ต้องใช้ความพยายามนะ! 😝</h2>
+            <h2 style="text-align:center; margin-top:100px; color:var(--accent);">บิบี๋ตามจับ<br>ซองจดหมายเย้วอ้วงงง !! 💕💕</h2>
             <div class="flying-envelope" id="envelope" onmouseover="moveEnv()" ontouchstart="moveEnvMobile(event)">
                 <div class="wing left"></div><div class="env-body">💌</div><div class="wing right"></div>
             </div>
@@ -136,7 +133,6 @@
     </div>
 
     <div id="page2" class="page">
-        <h2 style="margin-bottom:40px; color: var(--primary);">เติมรักให้เต็มหัวใจ ❤️</h2>
         <div class="heart-container" onclick="fillHeart()">
             <svg viewBox="0 0 200 200" width="100%" height="100%">
                 <defs>
@@ -149,8 +145,7 @@
             </svg>
             <div style="position:absolute; top:45%; width:100%; text-align:center; color:#ff5c8a; font-weight:bold; font-size: 1.5rem;"><span id="percent">0%</span></div>
         </div>
-        <p class="tap-msg">👆 จิ้มหัวใจเร็วววว!</p>
-    </div>
+        </div>
 
     <div class="final-msg-container" id="finalMsgContainer">
         <div class="final-msg-box">
@@ -211,7 +206,6 @@
     </div>
 
     <script>
-        // --- GLOBAL: AUDIO & BACKGROUND ---
         let audioPlaying = false;
         function playAudio() {
             if(!audioPlaying) {
@@ -237,7 +231,6 @@
         }
         createFloaters('bgFloaters', 20);
 
-        // --- NAVIGATION ---
         function goTo(id) {
             document.querySelectorAll('.page').forEach(p => {
                 p.style.opacity = 0;
@@ -250,7 +243,6 @@
             }, 500);
         }
 
-        // --- PAGE 1: CHASE ---
         const env = document.getElementById('envelope');
         env.style.left = "50%"; env.style.top = "40%"; env.style.transform = "translate(-50%, -50%)";
         function moveEnv() {
@@ -266,7 +258,6 @@
         }
         env.onclick = () => goTo('page2');
 
-        // --- PAGE 2: HEART ---
         let percent = 0;
         function fillHeart() {
             if(percent >= 100) return;
