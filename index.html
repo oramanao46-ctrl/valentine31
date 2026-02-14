@@ -79,6 +79,14 @@
             transition: transform 0.1s; filter: drop-shadow(0 10px 20px rgba(255, 92, 138, 0.4));
         }
         .heart-container:active { transform: scale(0.95); }
+        .tap-instruction {
+            margin-top: 30px;
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 400;
+            animation: pulse 1.5s infinite;
+            text-align: center;
+        }
 
         /* --- FINAL MESSAGE (Scrollable) --- */
         .final-msg-container {
@@ -145,7 +153,8 @@
             </svg>
             <div style="position:absolute; top:45%; width:100%; text-align:center; color:#ff5c8a; font-weight:bold; font-size: 1.5rem;"><span id="percent">0%</span></div>
         </div>
-        </div>
+        <div class="tap-instruction">แตะตรงหัวใจเย้วอ้วงง !!!!</div>
+    </div>
 
     <div class="final-msg-container" id="finalMsgContainer">
         <div class="final-msg-box">
@@ -211,7 +220,8 @@
             if(!audioPlaying) {
                 document.getElementById('bgm').play().catch(()=>{});
                 audioPlaying = true;
-                document.querySelector('.music-hint').style.display = 'none';
+                const hint = document.querySelector('.music-hint');
+                if(hint) hint.style.display = 'none';
             }
         }
         
@@ -278,4 +288,3 @@
     </script>
 </body>
 </html>
-
